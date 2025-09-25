@@ -165,11 +165,11 @@
 					</div>
 				</div>
 				{# 
-				            <div>
-				               <label for="name">Full name</label>
-				               <input id="name" name="name" type="text" placeholder="Your name"   autocomplete="name">
-				            </div>
-				            #}
+								            <div>
+								               <label for="name">Full name</label>
+								               <input id="name" name="name" type="text" placeholder="Your name"   autocomplete="name">
+								            </div>
+								            #}
 				<div>
 					<label for="email">Email address</label>
 					<input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email">
@@ -216,15 +216,27 @@
 				<textarea id="address" name="address" placeholder="Street, City, State / Province, Postal Code, Country"></textarea>
 			</div>
 
-				<div>
-					<label for="file">Attachment (JPEG, JPG, PNG, WEBP, MP4)</label>
-					<input id="file" name="file" type="file" accept="image/jpeg,image/jpg,image/png,image/webp,video/mp4">
-					<p class="helper">Optional. Max size depends on your server/email limits.</p>
-				</div>
-			{# <div>
-				<label for="file">Upload File</label>
-				<input type="file" id="file" name="file" placeholder=""/>
-			</div> #}
+			<div>
+				<label for="file">Attachment (JPEG, JPG, PNG, WEBP, MP4)</label>
+				<input id="file" name="file" type="file" accept="image/jpeg,image/jpg,image/png,image/webp,video/mp4">
+				<p class="helper">Optional. Max size depends on your server/email limits.</p>
+			</div>
+			<div>
+				<label>
+					<input type="checkbox" id="privacyPolicy" name="privacyPolicy" required>
+					I agree to the
+					<a href="/privacy-policy" target="_blank">Privacy Policy</a>
+				</label>
+			</div>
+
+			<div>
+				<label>
+					<input type="checkbox" id="terms" name="terms" required>
+					I agree to the
+					<a href="/terms-and-conditions" target="_blank">Terms and Conditions</a>
+				</label>
+			</div>
+
 			<div class="actions">
 				<button type="submit" id="sendBtn">Send Message</button>
 				<span class="helper">We typically respond within 2 business days.</span>

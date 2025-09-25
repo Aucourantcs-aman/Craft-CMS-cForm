@@ -24,8 +24,10 @@ class ContactController extends Controller
 		$phone = (string) $request->getBodyParam('phone');
 		$company = (string) $request->getBodyParam('company');
 		$subject = (string) $request->getBodyParam('subject');
-        $address = (string) $request->getBodyParam('address');
-        $uploadedFile = UploadedFile::getInstanceByName('file');
+		$address = (string) $request->getBodyParam('address');
+		$terms = $request->getBodyParam('terms');
+		$uploadedFile = UploadedFile::getInstanceByName('file');
+		$privacyPolicy = $request->getBodyParam('privacyPolicy');
 
 		try {
 			// Basic validation
@@ -64,49 +66,50 @@ class ContactController extends Controller
 				"",
 				"Message:",
 				$message,
-				// $file,
 			];
-            $textBody = implode("\n", array_values(array_filter($lines, static fn($v) => $v !== null && $v !== '')));
+			// Terms and privacy policy
+			$lines[] = $terms ? "Terms Accepted: Yes" : "Terms Accepted: No";
+			$lines[] = $privacyPolicy ? "Privacy Policy Accepted: Yes" : "Privacy Policy Accepted: No";
+			$textBody = implode("\n", array_values(array_filter($lines, static fn($v) => $v !== null && $v !== '')));
+			// Validate uploaded file if present
+			if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
+				$allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'mp4'];
+				$allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'];
+				$originalName = (string) $uploadedFile->name;
+				$extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+				$mimeType = (string) $uploadedFile->type;
+				$maxBytes = 20 * 1024 * 1024; // 20 MB cap
 
-            // Validate uploaded file if present
-            if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
-                $allowedExtensions = ['jpg','jpeg','png','webp','mp4'];
-                $allowedMimeTypes = ['image/jpeg','image/png','image/webp','video/mp4'];
-                $originalName = (string)$uploadedFile->name;
-                $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-                $mimeType = (string)$uploadedFile->type;
-                $maxBytes = 20 * 1024 * 1024; // 20 MB cap
-
-                if (!in_array($extension, $allowedExtensions, true)) {
-                    throw new \RuntimeException('Invalid file type. Allowed: JPEG, JPG, PNG, WEBP, MP4.');
-                }
-                if (!in_array($mimeType, $allowedMimeTypes, true)) {
-                    throw new \RuntimeException('Invalid file MIME type.');
-                }
-                if ($uploadedFile->size > $maxBytes) {
-                    throw new \RuntimeException('File is too large. Max 20 MB.');
-                }
-            }
+				if (!in_array($extension, $allowedExtensions, true)) {
+					throw new \RuntimeException('Invalid file type. Allowed: JPEG, JPG, PNG, WEBP, MP4.');
+				}
+				if (!in_array($mimeType, $allowedMimeTypes, true)) {
+					throw new \RuntimeException('Invalid file MIME type.');
+				}
+				if ($uploadedFile->size > $maxBytes) {
+					throw new \RuntimeException('File is too large. Max 20 MB.');
+				}
+			}
 
 			// Send an email
 			$toAddress = Craft::$app->projectConfig->get('email.fromEmail') ?: 'you@example.com';
 			$subjectLine = $subject !== '' ? $subject : 'New Contact Form Message';
-            $messageModel = Craft::$app->getMailer()
-                ->compose()
-                ->setTo($toAddress)
-                ->setFrom([$toAddress => Craft::$app->name])
-                ->setReplyTo([$email => $name])
-                ->setSubject($subjectLine)
-                ->setTextBody($textBody);
+			$messageModel = Craft::$app->getMailer()
+				->compose()
+				->setTo($toAddress)
+				->setFrom([$toAddress => Craft::$app->name])
+				->setReplyTo([$email => $name])
+				->setSubject($subjectLine)
+				->setTextBody($textBody);
 
-            if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
-                $messageModel->attach($uploadedFile->tempName, [
-                    'fileName' => $uploadedFile->name,
-                    'contentType' => $uploadedFile->type ?: null,
-                ]);
-            }
+			if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
+				$messageModel->attach($uploadedFile->tempName, [
+					'fileName' => $uploadedFile->name,
+					'contentType' => $uploadedFile->type ?: null,
+				]);
+			}
 
-            $sent = $messageModel->send();
+			$sent = $messageModel->send();
 
 			if (!$sent) {
 				throw new \RuntimeException('Failed to send your message.');
