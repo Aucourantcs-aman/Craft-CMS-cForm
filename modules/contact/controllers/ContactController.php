@@ -28,8 +28,16 @@ class ContactController extends Controller
 		$terms = $request->getBodyParam('terms');
 		$uploadedFile = UploadedFile::getInstanceByName('file');
 		$privacyPolicy = $request->getBodyParam('privacyPolicy');
+		$website = trim((string) $request->getBodyParam('website'));
+        $honeypot = trim((string) $request->getBodyParam('website'));
 
 		try {
+			// Honeypot: if filled, treat as spam and silently succeed
+			if ($website !== '') {
+				Craft::warning('Honeypot triggered; dropping submission.', __METHOD__);
+				Craft::$app->getSession()->setNotice('Message sent successfully!');
+				return $this->redirectToPostedUrl();
+			}
 			// Basic validation
 
 			// Check if strings and proper length
@@ -55,6 +63,12 @@ class ContactController extends Controller
 			if (strlen($phone) > 10 || strlen($phone) < 10) {
 				throw new \RuntimeException('Phone number must be exactly 10 digits.');
 			}
+            if ($honeypot !== '') {
+                // Bot detected: stop processing
+                Craft::info('Honeypot triggered. Possible bot submission.', __METHOD__);
+                Craft::$app->getSession()->setError('Unable to submit form.'); 
+                return $this->redirectToPostedUrl();
+            }
 			$name = $fname . ' ' . $lname;
 			// Build a readable text body including optional fields
 			$lines = [
