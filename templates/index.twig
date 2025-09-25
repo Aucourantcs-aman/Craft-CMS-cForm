@@ -6,6 +6,7 @@
 		<title>Welcome to Craft CMS</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 		<meta name="referrer" content="origin-when-cross-origin"/>
+		<script src="https://www.google.com/recaptcha/api.js?render={{ getenv('RECAPTCHA_SITE_KEY') }}"></script>
 		<style>:root
 		{
 			--bg: #f7fafc;
@@ -138,6 +139,14 @@
 			}
 		}
 
+.honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
 
 	</style>
 </head>
@@ -152,10 +161,11 @@
 			{% endif %}
 			<h1 id="contact-title">Contact Craft cms developer</h1>
 			<p class="lead">Have questions or need support? Fill out the form and we'll get back to you shortly.</p>
-			<form method="post" action="" accept-charset="UTF-8" enctype="multipart/form-data" novalidate>
+		<form id="contact-form" method="post" action="" accept-charset="UTF-8" enctype="multipart/form-data" novalidate>
 				{{ csrfInput() }}
 				{{ actionInput('contact/contact/send') }}
 				{{ redirectInput('/') }}
+				<input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" value="">
 				<div class="field-row">
 					<div>
 						<label for="fname">First Name</label>
@@ -237,7 +247,6 @@
 					<a href="/terms-and-conditions" target="_blank">Terms and Conditions</a>
 				</label>
 			</div>
-
 			<div class="actions">
 				<button type="submit" id="sendBtn">Send Message</button>
 				<span class="helper">We typically respond within 2 business days.</span>
@@ -246,22 +255,35 @@
 	</section>
 </body>
  <script>
-      document.addEventListener('DOMContentLoaded', function () {
+	 document.addEventListener('DOMContentLoaded', function () {
           const form = document.querySelector('form');
           const submitBtn = document.getElementById('sendBtn');
       
-          form.addEventListener('submit', function (event) {
-              // Check if the form is valid
-              if (!form.checkValidity()) {
-                  // Let browser show native validation messages
-                  return;
-              }
-      
-              // Disable the button and change text
-              submitBtn.disabled = true;
-              submitBtn.textContent = 'Sending...';
-              submitBtn.style.pointerEvents = 'none';
-              submitBtn.style.cursor = 'default';
-          });
+		 form.addEventListener('submit', function (event) {
+			 // Check if the form is valid first
+			 if (!form.checkValidity()) {
+				 return;
+			 }
+			 event.preventDefault();
+			 // Disable the button and change text
+			 submitBtn.disabled = true;
+			 submitBtn.textContent = 'Verifying...';
+			 submitBtn.style.pointerEvents = 'none';
+			 submitBtn.style.cursor = 'default';
+
+			 // Execute reCAPTCHA v3
+			 grecaptcha.ready(function() {
+				 grecaptcha.execute('{{ getenv('RECAPTCHA_SITE_KEY') }}', {action: 'submit'}).then(function(token) {
+					 document.getElementById('g-recaptcha-response').value = token;
+					 submitBtn.textContent = 'Sending...';
+					 form.submit();
+				 }).catch(function() {
+					 submitBtn.disabled = false;
+					 submitBtn.textContent = 'Send Message';
+				 });
+			 });
+		 });
       });
+
    </script></html>
+

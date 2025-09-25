@@ -3,6 +3,7 @@ namespace modules\contact\controllers;
 
 use Craft;
 use craft\web\Controller;
+use craft\helpers\App;
 use yii\web\UploadedFile;
 use yii\web\Response;
 
@@ -29,9 +30,36 @@ class ContactController extends Controller
 		$uploadedFile = UploadedFile::getInstanceByName('file');
 		$privacyPolicy = $request->getBodyParam('privacyPolicy');
 		$website = trim((string) $request->getBodyParam('website'));
-        $honeypot = trim((string) $request->getBodyParam('website'));
+		$honeypot = trim((string) $request->getBodyParam('website'));
+		$recaptchaToken = (string) $request->getBodyParam('g-recaptcha-response');
 
 		try {
+			// reCAPTCHA v3 verification
+			$secret = (string) (App::env('RECAPTCHA_SECRET_KEY') ?? '');
+			if ($secret === '') {
+				throw new \RuntimeException('reCAPTCHA is not configured.');
+			}
+			if ($recaptchaToken === '') {
+				throw new \RuntimeException('reCAPTCHA verification failed.');
+			}
+			$client = Craft::createGuzzleClient(['timeout' => 5]);
+			$response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
+				'form_params' => [
+					'secret' => $secret,
+					'response' => $recaptchaToken,
+					'remoteip' => $request->getUserIP(),
+				],
+			]);
+			$payload = json_decode((string) $response->getBody(), true) ?: [];
+			if (!(isset($payload['success']) && $payload['success'] === true)) {
+				throw new \RuntimeException('reCAPTCHA check failed.');
+			}
+			// Optional score/action checks for v3
+			$score = isset($payload['score']) ? (float) $payload['score'] : 0.0;
+			$action = isset($payload['action']) ? (string) $payload['action'] : '';
+			if ($score < 0.5 || ($action && $action !== 'submit')) {
+				throw new \RuntimeException('Suspicious activity detected.');
+			}
 			// Honeypot: if filled, treat as spam and silently succeed
 			if ($website !== '') {
 				Craft::warning('Honeypot triggered; dropping submission.', __METHOD__);

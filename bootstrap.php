@@ -16,3 +16,8 @@ if (class_exists(Dotenv\Dotenv::class)) {
     // with matching names. Use `createUnsafeImmutable` to disable this.
     Dotenv\Dotenv::createUnsafeMutable(CRAFT_BASE_PATH)->safeLoad();
 }
+
+// reCAPTCHA keys (optional): define via .env to avoid committing secrets
+// Put these in your .env file:
+// RECAPTCHA_SITE_KEY="6LcYttQrAAAAAARaGbSHpEaljdV3XNYiEjyG1icY"
+// RECAPTCHA_SECRET_KEY="6LcYttQrAAAAABOIFBd1VJ_BZIuzDvPaRnZUTH87"
