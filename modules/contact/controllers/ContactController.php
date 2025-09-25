@@ -3,7 +3,7 @@ namespace modules\contact\controllers;
 
 use Craft;
 use craft\web\Controller;
-use SpomkyLabs\Pki\ASN1\Component\Length;
+use yii\web\UploadedFile;
 use yii\web\Response;
 
 class ContactController extends Controller
@@ -24,11 +24,12 @@ class ContactController extends Controller
 		$phone = (string) $request->getBodyParam('phone');
 		$company = (string) $request->getBodyParam('company');
 		$subject = (string) $request->getBodyParam('subject');
-		$address = (string) $request->getBodyParam('address');
+        $address = (string) $request->getBodyParam('address');
+        $uploadedFile = UploadedFile::getInstanceByName('file');
 
 		try {
 			// Basic validation
-			
+
 			// Check if strings and proper length
 			if (!is_string($fname) || !is_string($lname)) {
 				throw new \RuntimeException('First name and last name must be text.');
@@ -63,20 +64,49 @@ class ContactController extends Controller
 				"",
 				"Message:",
 				$message,
+				// $file,
 			];
-			$textBody = implode("\n", array_values(array_filter($lines, static fn($v) => $v !== null && $v !== '')));
+            $textBody = implode("\n", array_values(array_filter($lines, static fn($v) => $v !== null && $v !== '')));
+
+            // Validate uploaded file if present
+            if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
+                $allowedExtensions = ['jpg','jpeg','png','webp','mp4'];
+                $allowedMimeTypes = ['image/jpeg','image/png','image/webp','video/mp4'];
+                $originalName = (string)$uploadedFile->name;
+                $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+                $mimeType = (string)$uploadedFile->type;
+                $maxBytes = 20 * 1024 * 1024; // 20 MB cap
+
+                if (!in_array($extension, $allowedExtensions, true)) {
+                    throw new \RuntimeException('Invalid file type. Allowed: JPEG, JPG, PNG, WEBP, MP4.');
+                }
+                if (!in_array($mimeType, $allowedMimeTypes, true)) {
+                    throw new \RuntimeException('Invalid file MIME type.');
+                }
+                if ($uploadedFile->size > $maxBytes) {
+                    throw new \RuntimeException('File is too large. Max 20 MB.');
+                }
+            }
 
 			// Send an email
 			$toAddress = Craft::$app->projectConfig->get('email.fromEmail') ?: 'you@example.com';
 			$subjectLine = $subject !== '' ? $subject : 'New Contact Form Message';
-			$sent = Craft::$app->getMailer()
-				->compose()
-				->setTo($toAddress)
-				->setFrom([$toAddress => Craft::$app->name])
-				->setReplyTo([$email => $name])
-				->setSubject($subjectLine)
-				->setTextBody($textBody)
-				->send();
+            $messageModel = Craft::$app->getMailer()
+                ->compose()
+                ->setTo($toAddress)
+                ->setFrom([$toAddress => Craft::$app->name])
+                ->setReplyTo([$email => $name])
+                ->setSubject($subjectLine)
+                ->setTextBody($textBody);
+
+            if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
+                $messageModel->attach($uploadedFile->tempName, [
+                    'fileName' => $uploadedFile->name,
+                    'contentType' => $uploadedFile->type ?: null,
+                ]);
+            }
+
+            $sent = $messageModel->send();
 
 			if (!$sent) {
 				throw new \RuntimeException('Failed to send your message.');
