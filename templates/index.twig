@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta charset="utf-8"/>
+		<title>Welcome to Craft CMS</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+		<meta name="referrer" content="origin-when-cross-origin"/>
+		<style>:root
+		{
+			--bg: #f7fafc;
+			--card: #ffffff;
+			--accent: #2563eb;
+			--text: #0f172a;
+			--muted: #64748b;
+			--radius: 10px;
+			font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+		}
+
+
+		* {
+			box-sizing: border-box
+		}
+		body {
+			margin: 0;
+			min-height: 100vh;
+			background: linear-gradient(180deg,var(--bg),#eef2ff 60%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 32px;
+			color: var(--text);
+		}
+
+
+		.card {
+			width: 100%;
+			max-width: 720px;
+			background: var(--card);
+			border-radius: var(--radius);
+			box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+			padding: 28px;
+		}
+
+
+		.intro {
+			padding-right: 8px;
+		}
+		h1 {
+			margin: 0 0 8px;
+			font-size: 20px
+		}
+		p.lead {
+			margin: 0;
+			color: var(--muted);
+			font-size: 14px
+		}
+
+
+		form {
+			display: flex;
+			flex-direction: column;
+			gap: 12px
+		}
+		label {
+			font-size: 13px;
+			color: #0b1220
+		}
+		input[type="text"],
+		input[type="email"],
+		textarea {
+			width: 100%;
+			padding: 10px 12px;
+			border: 1px solid #e6e9ef;
+			border-radius: 8px;
+			font-size: 14px;
+			color: var(--text);
+			outline: none;
+			transition: box-shadow 0.15s, border-color 0.15s;
+		}
+		input:focus,
+		textarea:focus {
+			border-color: var(--accent);
+			box-shadow: 0 4px 18px rgba(37, 99, 235, 0.12)
+		}
+		textarea {
+			min-height: 140px;
+			resize: vertical
+		}
+
+
+		.helper {
+			font-size: 12px;
+			color: var(--muted)
+		}
+
+
+		.actions {
+			display: flex;
+			gap: 12px;
+			align-items: center;
+			margin-top: 8px
+		}
+		button {
+			background: var(--accent);
+			color: white;
+			padding: 10px 16px;
+			border: none;
+			border-radius: 8px;
+			font-weight: 600;
+			cursor: pointer;
+		}
+		button:active {
+			transform: translateY(1px)
+		}
+
+		/* Flash messages */
+		.success {
+			color:#166534;
+			background:#dcfce7;
+			padding:8px 10px;
+			border-radius:6px;
+			margin:0 0 12px;
+		}
+		.error {
+			color:#7f1d1d;
+			background:#fee2e2;
+			padding:8px 10px;
+			border-radius:6px;
+			margin:0 0 12px;
+		}
+
+
+		.side {
+			background: linear-gradient(180deg,#fbfdff,#f8fbff);
+			padding: 16px;
+			border-radius: 8px;
+			border: 1px solid #f1f5f9;
+			font-size: 13px;
+			color: var(--muted);
+		}
+
+
+		.field-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 12px
+		}
+
+
+		@media(max-width:800px) {
+			.card {
+				grid-template-columns: 1fr;
+			}
+			.side {
+				order: 2
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="card" role="main">
+		<section class="intro" aria-labelledby="contact-title">
+			{% if craft.app.session.hasFlash('notice') %}
+				<p class="success">{{ craft.app.session.getFlash('notice') }}</p>
+			{% endif %}
+			{% if craft.app.session.hasFlash('error') %}
+				<p class="error">{{ craft.app.session.getFlash('error') }}</p>
+			{% endif %}
+			<h1 id="contact-title">Contact Craft cms developer</h1>
+			<p class="lead">Have questions or need support? Fill out the form and we'll get back to you shortly.</p>
+
+
+			<form method="post" action="" accept-charset="UTF-8" novalidate>
+				{{ csrfInput() }}
+				{{ actionInput('contact/contact/send') }}
+				{{ redirectInput('/') }}
+				<div class="field-row">
+					<div>
+						<label for="name">Full name</label>
+						<input id="name" name="name" type="text" placeholder="Your name" required autocomplete="name">
+					</div>
+					<div>
+						<label for="email">Email address</label>
+						<input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email">
+					</div>
+				</div>
+
+				<div class="field-row">
+					<div>
+						<label for="countryCode">Country code</label>
+						<select id="countryCode" name="countryCode" required>
+							<option value="" disabled selected>Select country code</option>
+							<option value="+1">United States (+1)</option>
+							<option value="+44">United Kingdom (+44)</option>
+							<option value="+61">Australia (+61)</option>
+							<option value="+1-CA">Canada (+1)</option>
+							<option value="+33">France (+33)</option>
+							<option value="+49">Germany (+49)</option>
+							<option value="+91">India (+91)</option>
+							<option value="+81">Japan (+81)</option>
+							<option value="+65">Singapore (+65)</option>
+							<option value="+971">United Arab Emirates (+971)</option>
+						</select>
+					</div>
+					<div>
+						<label for="phone">Phone number</label>
+						<input id="phone" name="phone" type="tel" placeholder="1234567890" autocomplete="tel">
+					</div>
+				</div>
+
+				<div class="field-row">
+					<div>
+						<label for="company">Company</label>
+						<input id="company" name="company" type="text" placeholder="Your company name">
+					</div>
+					<div>
+						<label for="subject">Subject</label>
+						<input id="subject" name="subject" type="text" placeholder="Subject of your message">
+					</div>
+				</div>
+
+
+				<div>
+					<label for="message">Message</label>
+					<textarea id="message" name="message" placeholder="Write your message here..." required></textarea>
+				</div>
+
+				<div>
+					<label for="address">Address</label>
+					<textarea id="address" name="address" placeholder="Street, City, State / Province, Postal Code, Country"></textarea>
+				</div>
+
+
+				<div class="actions">
+					<button type="submit">Send Message</button>
+					<span class="helper">We typically respond within 2 business days.</span>
+				</div>
+			</form>
+		</section>
+	</main>
+</body></html>

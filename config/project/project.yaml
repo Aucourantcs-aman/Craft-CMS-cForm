@@ -1,0 +1,30 @@
+dateModified: 1758779331
+email:
+  fromEmail: aman.aucourantcs@gmail.com
+  fromName: cForm
+  replyToEmail: null
+  template: null
+  transportSettings:
+    host: smtp.gmail.com
+    password: 'zely ylbm turz uxcr'
+    port: '587'
+    useAuthentication: '1'
+    username: aman.aucourantcs@gmail.com
+  transportType: craft\mail\transportadapters\Smtp
+meta:
+  __names__:
+    2adab157-3177-49f3-9890-d993890263f3: cForm # cForm
+    7108dc11-b584-4e2b-b9f4-5dd3ddbce00e: cForm # cForm
+system:
+  edition: solo
+  live: true
+  name: cForm
+  schemaVersion: 5.8.0.3
+  timeZone: America/Los_Angeles
+users:
+  allowPublicRegistration: false
+  defaultGroup: null
+  photoSubpath: null
+  photoVolumeUid: null
+  require2fa: false
+  requireEmailVerification: true

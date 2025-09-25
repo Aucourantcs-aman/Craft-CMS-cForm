@@ -1,0 +1,8 @@
+baseUrl: $PRIMARY_SITE_URL
+handle: default
+hasUrls: true
+language: en
+name: cForm
+primary: true
+siteGroup: 2adab157-3177-49f3-9890-d993890263f3 # cForm
+sortOrder: 1
