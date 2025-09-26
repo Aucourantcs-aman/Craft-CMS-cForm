@@ -108,7 +108,7 @@
 			background: #dcfce7;
 			padding: 8px 10px;
 			border-radius: 6px;
-			margin: 0 0 12px;
+			margin: 10px 0 10px 0px;
 		}
 		.error {
 			color: #7f1d1d;
@@ -161,19 +161,20 @@
 			{% endif %}
 			<h1 id="contact-title">Contact Craft cms developer</h1>
 			<p class="lead">Have questions or need support? Fill out the form and we'll get back to you shortly.</p>
-		<form id="contact-form" method="post" action="" accept-charset="UTF-8" enctype="multipart/form-data" novalidate>
-				{{ csrfInput() }}
-				{{ actionInput('contact/contact/send') }}
-				{{ redirectInput('/') }}
-				<input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" value="">
+<form id="contact-form" method="post" action="" accept-charset="UTF-8" enctype="multipart/form-data" novalidate data-ajax="true">
+    {{ csrfInput() }}
+    {{ actionInput('contact/contact/send') }}
+    {{ redirectInput('/') }}
+    <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" value="">
+			<div id="ajaxResponse"></div>
 				<div class="field-row">
 					<div>
 						<label for="fname">First Name</label>
-						<input id="fname" name="fname" type="text" placeholder="Your First Name" autocomplete="given-name" minlength="2" maxlength="20" pattern="[A-Za-z\s'-]+" title="Please enter a valid first name" required>
+						<input id="fname" name="fname" type="text" placeholder="Your First Name" autocomplete="given-name" minlength="2" maxlength="20" title="Please enter a valid first name" required>
 					</div>
 					<div>
 						<label for="lname">Last Name</label>
-						<input id="lname" name="lname" type="text" placeholder="Your Last Name" autocomplete="family-name" minlength="2" maxlength="20" pattern="[A-Za-z\s'-]+" title="Please enter a valid last name" required>
+						<input id="lname" name="lname" type="text" placeholder="Your Last Name" autocomplete="family-name" minlength="2" maxlength="20" title="Please enter a valid last name" required>
 					</div>
 				</div>
 				<div>
@@ -247,43 +248,91 @@
 					<a href="/terms-and-conditions" target="_blank">Terms and Conditions</a>
 				</label>
 			</div>
-			<div class="actions">
-				<button type="submit" id="sendBtn">Send Message</button>
-				<span class="helper">We typically respond within 2 business days.</span>
-			</div>
+    <div class="actions">
+        <button type="submit" id="sendBtn">Send Message</button>
+        <span class="helper">We typically respond within 2 business days.</span>
+    </div>
 		</form>
+
 	</section>
 </body>
  <script>
-	 document.addEventListener('DOMContentLoaded', function () {
-          const form = document.querySelector('form');
-          const submitBtn = document.getElementById('sendBtn');
-      
-		 form.addEventListener('submit', function (event) {
-			 // Check if the form is valid first
-			 if (!form.checkValidity()) {
-				 return;
-			 }
-			 event.preventDefault();
-			 // Disable the button and change text
-			 submitBtn.disabled = true;
-			 submitBtn.textContent = 'Verifying...';
-			 submitBtn.style.pointerEvents = 'none';
-			 submitBtn.style.cursor = 'default';
+	document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('#contact-form');
+    const submitBtn = document.getElementById('sendBtn');
+    const ajaxResponse = document.getElementById('ajaxResponse');
 
-			 // Execute reCAPTCHA v3
-			 grecaptcha.ready(function() {
-				 grecaptcha.execute('{{ getenv('RECAPTCHA_SITE_KEY') }}', {action: 'submit'}).then(function(token) {
-					 document.getElementById('g-recaptcha-response').value = token;
-					 submitBtn.textContent = 'Sending...';
-					 form.submit();
-				 }).catch(function() {
-					 submitBtn.disabled = false;
-					 submitBtn.textContent = 'Send Message';
-				 });
-			 });
-		 });
-      });
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Reset previous messages
+        ajaxResponse.innerHTML = '';
+
+        // Check HTML5 validity
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        // Disable button
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.style.pointerEvents = 'none';
+        submitBtn.style.cursor = 'not-allowed';
+
+        // Execute reCAPTCHA v3
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ getenv("RECAPTCHA_SITE_KEY") }}', { action: 'submit' })
+            .then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+                
+                // Prepare form data including file
+                const formData = new FormData(form);
+
+                // AJAX request
+                fetch(form.getAttribute('action'), {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin', // required for Craft CSRF
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Here, we parse the HTML returned by your controller
+                    // We'll look for flash messages
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+                    const success = doc.querySelector('.success');
+                    const error = doc.querySelector('.error');
+
+                    if (success) {
+                        ajaxResponse.innerHTML = `<p class="success">${success.textContent}</p>`;
+                        form.reset();
+                    } else if (error) {
+                        ajaxResponse.innerHTML = `<p class="error">${error.textContent}</p>`;
+                    } else {
+                        ajaxResponse.innerHTML = `<p class="error">Unexpected response from server.</p>`;
+                    }
+                })
+                .catch(err => {
+                    ajaxResponse.innerHTML = `<p class="error">Error sending message. Try again later.</p>`;
+                    // console.error(err);
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                    submitBtn.style.pointerEvents = '';
+                    submitBtn.style.cursor = 'not-allowed';
+                });
+
+            }).catch(function() {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+                ajaxResponse.innerHTML = `<p class="error">reCAPTCHA verification failed.</p>`;
+            });
+        });
+    });
+});
+
 
    </script></html>
 
