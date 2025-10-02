@@ -10,7 +10,7 @@ settings:
   allowedKinds: null
   branchLimit: null
   defaultPlacement: end
-  defaultUploadLocationSource: null
+  defaultUploadLocationSource: 'volume:c81bd8b6-67f5-4539-a8a3-766286ca42e3' # Form Submission Asset
   defaultUploadLocationSubpath: null
   maintainHierarchy: false
   maxRelations: null
@@ -19,12 +19,12 @@ settings:
   restrictFiles: false
   restrictLocation: false
   restrictedDefaultUploadSubpath: null
-  restrictedLocationSource: null
+  restrictedLocationSource: 'volume:c81bd8b6-67f5-4539-a8a3-766286ca42e3' # Form Submission Asset
   restrictedLocationSubpath: null
   selectionLabel: null
   showCardsInGrid: false
   showSearchInput: true
-  showSiteMenu: false
+  showSiteMenu: true
   showUnpermittedFiles: false
   showUnpermittedVolumes: false
   sources: '*'

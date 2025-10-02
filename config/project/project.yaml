@@ -1,4 +1,4 @@
-dateModified: 1759385129
+dateModified: 1759391511
 email:
   fromEmail: aman.aucourantcs@gmail.com
   fromName: cForm
@@ -11,6 +11,14 @@ email:
     useAuthentication: '1'
     username: aman.aucourantcs@gmail.com
   transportType: craft\mail\transportadapters\Smtp
+fs:
+  formSubmissionImages:
+    hasUrls: true
+    name: 'Form Submission Images'
+    settings:
+      path: '@webroot/assets/images/form-submission-images'
+    type: craft\fs\Local
+    url: '@web/assets/images/form-submission-images'
 meta:
   __names__:
     0c847d6f-d0fc-4baa-b972-d0c0f17bc1e9: 'Contact Submissions' # Contact Submissions
@@ -24,6 +32,7 @@ meta:
     aca52138-195b-468e-ac85-9b899885c044: 'Form Submission Company' # Form Submission Company
     accd22f8-dc2c-47a6-b969-280c4db15fc3: 'Form Submission Attachment' # Form Submission Attachment
     b9b5f679-787a-4752-86d2-de1cb9a57b01: 'Form Submission Message' # Form Submission Message
+    c81bd8b6-67f5-4539-a8a3-766286ca42e3: 'Form Submission Asset' # Form Submission Asset
     f604cf1b-c9d3-4bc8-80cc-80eb4d168447: 'Form Submission Email' # Form Submission Email
     f1524e95-e660-4e03-83fb-abf5c4536469: 'Form Submission Subject' # Form Submission Subject
 system:
