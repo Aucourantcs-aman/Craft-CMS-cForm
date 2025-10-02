@@ -1,0 +1,201 @@
+color: null
+description: null
+fieldLayouts:
+  a687b886-e80e-4ea5-9e0f-58f2d981043e:
+    cardThumbAlignment: end
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-10-02T05:49:51+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            required: true
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: 47f1e5df-f80b-4f2d-ac26-688ed1abcd05
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: f1524e95-e660-4e03-83fb-abf5c4536469 # Form Submission Subject
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 366c84ec-c3d0-41ee-abce-71b2676b8616
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            elementCondition: null
+            type: craft\fieldlayoutelements\HorizontalRule
+            uid: 87b24061-b837-4000-b396-6fe2e17f3bc1
+            userCondition: null
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 2420296a-8e3b-46e0-b5ba-3462fb952c62 # Form Submission Name
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 0ff06ea4-c4e5-44d2-afec-202ec1a9113e
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: f604cf1b-c9d3-4bc8-80cc-80eb4d168447 # Form Submission Email
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 2ee37ece-fd36-49e8-aefb-bf29aa337283
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 5c23f035-00ee-4547-aa6c-d38e12c6c8d5 # Form Submission Phone Number
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 2b53c1c2-9374-4115-8b68-ff6afe383cc8
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: aca52138-195b-468e-ac85-9b899885c044 # Form Submission Company
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 29b0bb14-a803-40a7-ab92-037531f1ce15
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            elementCondition: null
+            type: craft\fieldlayoutelements\HorizontalRule
+            uid: 2d4c0356-d0fc-423f-a106-bc9a1486263b
+            userCondition: null
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: b9b5f679-787a-4752-86d2-de1cb9a57b01 # Form Submission Message
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 92bcc9a5-f7b3-4863-ad1d-04cc05c28a3f
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 6bc1aeb3-570a-464e-b587-5e9dd59e4172 # Form Submission Address
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: c8184a05-4d7e-4773-b118-9dcc1368ca9e
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-02T06:05:29+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: accd22f8-dc2c-47a6-b969-280c4db15fc3 # Form Submission Attachment
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: af607ac2-382a-4f75-ad61-e1d93f2f171f
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: f7c77f63-ac19-4bd5-89c6-d80680ca3ac1
+        userCondition: null
+handle: contactFormSubmissions
+hasTitleField: true
+icon: null
+name: 'Contact Form Submissions'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

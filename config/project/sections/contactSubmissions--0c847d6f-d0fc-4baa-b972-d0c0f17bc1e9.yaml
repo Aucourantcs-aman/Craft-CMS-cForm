@@ -1,0 +1,28 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 8a27ac15-b15d-4f17-a550-16ff5dc9cb2a # Contact Form Submissions
+handle: contactSubmissions
+maxAuthors: 1
+name: 'Contact Submissions'
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  7108dc11-b584-4e2b-b9f4-5dd3ddbce00e: # cForm
+    enabledByDefault: true
+    hasUrls: true
+    template: form-entries/contact-submissions/_entry.twig
+    uriFormat: 'contact-submissions/{slug}'
+type: channel

@@ -1,0 +1,10 @@
+columnSuffix: null
+handle: formSubmissionEmail
+instructions: null
+name: 'Form Submission Email'
+searchable: false
+settings:
+  placeholder: null
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Email

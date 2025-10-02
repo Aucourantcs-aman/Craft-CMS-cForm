@@ -168,16 +168,16 @@
             <div class="field-row">
                <div>
                   <label for="fname">First Name</label>
-                  <input id="fname" name="fname" type="text" placeholder="Your First Name" autocomplete="given-name" minlength="2" maxlength="20" title="Please enter a valid first name" required>
+                  <input id="fname" name="fname" type="text" placeholder="Your First Name" autocomplete="given-name" minlength="2" maxlength="20" title="Please enter a valid first name"  >
                </div>
                <div>
                   <label for="lname">Last Name</label>
-                  <input id="lname" name="lname" type="text" placeholder="Your Last Name" autocomplete="family-name" minlength="2" maxlength="20" title="Please enter a valid last name" required>
+                  <input id="lname" name="lname" type="text" placeholder="Your Last Name" autocomplete="family-name" minlength="2" maxlength="20" title="Please enter a valid last name"  >
                </div>
             </div>
             <div>
                <label for="email">Email address</label>
-               <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+               <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email"  >
             </div>
             </div>
             <div class="field-row">
@@ -203,7 +203,7 @@
                </div>
                <div>
                   <label for="phone">Phone number</label>
-                  <input id="phone" name="phone" type="tel" placeholder="0123456789" minlength="10" maxlength="10" pattern="^[0-9]{10}$" title="Enter 10 digits" autocomplete="tel" required>
+                  <input id="phone" name="phone" type="tel" placeholder="0123456789" minlength="10" maxlength="10" pattern="^[0-9]{10}$" title="Enter 10 digits" autocomplete="tel"  >
                </div>
             </div>
             <div class="field-row">
@@ -218,7 +218,7 @@
             </div>
             <div>
                <label for="message">Message</label>
-               <textarea id="message" name="message" placeholder="Write your message here..." minlength="5" required></textarea>
+               <textarea id="message" name="message" placeholder="Write your message here..." minlength="5"  ></textarea>
             </div>
             <div>
                <label for="address">Address</label>
@@ -231,14 +231,14 @@
             </div>
             <div>
                <label>
-               <input type="checkbox" id="privacyPolicy" name="privacyPolicy" required>
+               <input type="checkbox" id="privacyPolicy" name="privacyPolicy"  >
                I agree to the
                <a href="/privacy-policy" target="_blank">Privacy Policy</a>
                </label>
             </div>
             <div>
                <label>
-               <input type="checkbox" id="terms" name="terms" required>
+               <input type="checkbox" id="terms" name="terms"  >
                I agree to the
                <a href="/terms-and-conditions" target="_blank">Terms and Conditions</a>
                </label>
@@ -287,7 +287,7 @@
                      fetch(form.getAttribute('action'), {
                          method: 'POST',
                          body: formData,
-                         credentials: 'same-origin', // required for Craft CSRF
+                         credentials: 'same-origin', //   for Craft CSRF
                      })
                      .then(response => response.text())
                      .then(data => {

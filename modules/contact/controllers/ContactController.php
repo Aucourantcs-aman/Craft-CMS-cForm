@@ -2,10 +2,16 @@
 namespace modules\contact\controllers;
 
 use Craft;
+use craft\services\Sections;
 use craft\web\Controller;
 use craft\helpers\App;
 use yii\web\UploadedFile;
 use yii\web\Response;
+use craft\elements\Entry;
+use craft\helpers\ElementHelper;
+use craft\errors\ElementNotFoundException;
+use craft\errors\InvalidFieldException;
+use yii\base\Exception;
 
 class ContactController extends Controller
 {
@@ -14,11 +20,12 @@ class ContactController extends Controller
 
 	public function actionSend(): ?Response
 	{
+		// Request
 		$request = Craft::$app->getRequest();
+		$this->requirePostRequest();
 
 		$fname = trim((string) $request->getBodyParam('fname'));
 		$lname = trim((string) $request->getBodyParam('lname'));
-		// $name = (string)$request->getBodyParam('name');
 		$email = trim((string) $request->getBodyParam('email'));
 		$message = (string) $request->getBodyParam('message');
 		$countryCode = (string) $request->getBodyParam('countryCode');
@@ -32,6 +39,82 @@ class ContactController extends Controller
 		$website = trim((string) $request->getBodyParam('website'));
 		$honeypot = trim((string) $request->getBodyParam('website'));
 		$recaptchaToken = (string) $request->getBodyParam('g-recaptcha-response');
+
+		// Submitting entry data into the Crat cms admin
+
+		try {
+			// Handles
+			$sectionHandle = 'contactSubmissions';
+			$entryTypeHandle = 'contactFormSubmissions';
+
+			// Use the Entries service in Craft 5
+			$entriesService = Craft::$app->entries;
+
+			// Get the section
+			$section = $entriesService->getSectionByHandle($sectionHandle);
+			if (!$section) {
+				throw new ElementNotFoundException("Section with handle '{$sectionHandle}' not found.");
+			}
+
+			// Get the entry type (try direct lookup, then fallback)
+			$entryType = $entriesService->getEntryTypeByHandle($entryTypeHandle);
+			if (!$entryType) {
+				foreach ($entriesService->getEntryTypesBySectionId($section->id) as $type) {
+					if ($type->handle === $entryTypeHandle) {
+						$entryType = $type;
+						break;
+					}
+				}
+			}
+
+			if (!$entryType) {
+				throw new ElementNotFoundException("Entry Type with handle '{$entryTypeHandle}' not found for section '{$sectionHandle}'.");
+			}
+
+			// Build values from request (using the variables you already extracted)
+			// Ensure these variables ($fname, $lname, $email, etc.) are already defined from $request->getBodyParam(...)
+			$fullName = trim((string) ($fname . ' ' . $lname));
+			$company = (string) $company;
+			$address = (string) $address;
+			$emailAddr = (string) $email;
+			$messageText = (string) $message;
+			$phoneFull = trim((string) ($countryCode . '-' . $phone)); // countrycode-phone
+			$subjectText = (string) $subject;
+
+			// Create the entry
+			$entry = new Entry();
+			$entry->sectionId = $section->id;
+			$entry->typeId = $entryType->id;
+			$entry->title = $fullName ?: 'Contact Submission'; // title fallback
+			$entry->slug = ElementHelper::generateSlug($entry->title);
+			$entry->enabled = true;
+
+			// Map to your field handles (replace if any handle differs)
+			$entry->setFieldValues([
+				'formSubmissionName' => $fullName,
+				'formSubmissionCompany' => $company,
+				'formSubmissionAddress' => $address,
+				'formSubmissionEmail' => $emailAddr,
+				'formSubmissionMessage' => $messageText,
+				'formSubmissionPhoneNumber' => $phoneFull,
+				'formSubmissionSubject' => $subjectText,
+			]);
+
+			// Save via Elements service
+			if (!Craft::$app->elements->saveElement($entry)) {
+				Craft::error('Could not save entry: ' . implode(', ', $entry->getErrorSummary(true)), __METHOD__);
+				throw new \Exception('Could not save entry.');
+			}
+
+			// Optionally set a flash or return a response here
+			Craft::$app->getSession()->setFlash('success', 'Form submitted successfully.');
+
+		} catch (\Throwable $e) {
+			Craft::error($e->getMessage(), __METHOD__);
+			throw $e;
+		}
+
+
 
 		try {
 			// reCAPTCHA v3 verification
@@ -91,12 +174,12 @@ class ContactController extends Controller
 			if (strlen($phone) > 10 || strlen($phone) < 10) {
 				throw new \RuntimeException('Phone number must be exactly 10 digits.');
 			}
-            if ($honeypot !== '') {
-                // Bot detected: stop processing
-                Craft::info('Honeypot triggered. Possible bot submission.', __METHOD__);
-                Craft::$app->getSession()->setError('Unable to submit form.'); 
-                return $this->redirectToPostedUrl();
-            }
+			if ($honeypot !== '') {
+				// Bot detected: stop processing
+				Craft::info('Honeypot triggered. Possible bot submission.', __METHOD__);
+				Craft::$app->getSession()->setError('Unable to submit form.');
+				return $this->redirectToPostedUrl();
+			}
 			$name = $fname . ' ' . $lname;
 			// Build a readable text body including optional fields
 			$lines = [

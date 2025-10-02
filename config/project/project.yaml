@@ -1,4 +1,4 @@
-dateModified: 1758792388
+dateModified: 1759385129
 email:
   fromEmail: aman.aucourantcs@gmail.com
   fromName: cForm
@@ -13,8 +13,19 @@ email:
   transportType: craft\mail\transportadapters\Smtp
 meta:
   __names__:
+    0c847d6f-d0fc-4baa-b972-d0c0f17bc1e9: 'Contact Submissions' # Contact Submissions
     2adab157-3177-49f3-9890-d993890263f3: cForm # cForm
+    5c23f035-00ee-4547-aa6c-d38e12c6c8d5: 'Form Submission Phone Number' # Form Submission Phone Number
+    6bc1aeb3-570a-464e-b587-5e9dd59e4172: 'Form Submission Address' # Form Submission Address
+    8a27ac15-b15d-4f17-a550-16ff5dc9cb2a: 'Contact Form Submissions' # Contact Form Submissions
+    13ea8b63-81ba-436d-9d4d-8a47b9b4dcab: 'Form Submission Submitted At' # Form Submission Submitted At
     7108dc11-b584-4e2b-b9f4-5dd3ddbce00e: cForm # cForm
+    2420296a-8e3b-46e0-b5ba-3462fb952c62: 'Form Submission Name' # Form Submission Name
+    aca52138-195b-468e-ac85-9b899885c044: 'Form Submission Company' # Form Submission Company
+    accd22f8-dc2c-47a6-b969-280c4db15fc3: 'Form Submission Attachment' # Form Submission Attachment
+    b9b5f679-787a-4752-86d2-de1cb9a57b01: 'Form Submission Message' # Form Submission Message
+    f604cf1b-c9d3-4bc8-80cc-80eb4d168447: 'Form Submission Email' # Form Submission Email
+    f1524e95-e660-4e03-83fb-abf5c4536469: 'Form Submission Subject' # Form Submission Subject
 system:
   edition: solo
   live: true
