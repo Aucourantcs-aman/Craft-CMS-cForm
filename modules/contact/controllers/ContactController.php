@@ -2,7 +2,6 @@
 namespace modules\contact\controllers;
 
 use Craft;
-use craft\services\Sections;
 use craft\web\Controller;
 use craft\helpers\App;
 use yii\web\UploadedFile;
@@ -12,6 +11,7 @@ use craft\helpers\ElementHelper;
 use craft\errors\ElementNotFoundException;
 use craft\errors\InvalidFieldException;
 use yii\base\Exception;
+use craft\elements\Asset;
 
 class ContactController extends Controller
 {
@@ -39,81 +39,6 @@ class ContactController extends Controller
 		$website = trim((string) $request->getBodyParam('website'));
 		$honeypot = trim((string) $request->getBodyParam('website'));
 		$recaptchaToken = (string) $request->getBodyParam('g-recaptcha-response');
-
-		// Submitting entry data into the Crat cms admin
-
-		try {
-			// Handles
-			$sectionHandle = 'contactSubmissions';
-			$entryTypeHandle = 'contactFormSubmissions';
-
-			// Use the Entries service in Craft 5
-			$entriesService = Craft::$app->entries;
-
-			// Get the section
-			$section = $entriesService->getSectionByHandle($sectionHandle);
-			if (!$section) {
-				throw new ElementNotFoundException("Section with handle '{$sectionHandle}' not found.");
-			}
-
-			// Get the entry type (try direct lookup, then fallback)
-			$entryType = $entriesService->getEntryTypeByHandle($entryTypeHandle);
-			if (!$entryType) {
-				foreach ($entriesService->getEntryTypesBySectionId($section->id) as $type) {
-					if ($type->handle === $entryTypeHandle) {
-						$entryType = $type;
-						break;
-					}
-				}
-			}
-
-			if (!$entryType) {
-				throw new ElementNotFoundException("Entry Type with handle '{$entryTypeHandle}' not found for section '{$sectionHandle}'.");
-			}
-
-			// Build values from request (using the variables you already extracted)
-			// Ensure these variables ($fname, $lname, $email, etc.) are already defined from $request->getBodyParam(...)
-			$fullName = trim((string) ($fname . ' ' . $lname));
-			$company = (string) $company;
-			$address = (string) $address;
-			$emailAddr = (string) $email;
-			$messageText = (string) $message;
-			$phoneFull = trim((string) ($countryCode . '-' . $phone)); // countrycode-phone
-			$subjectText = (string) $subject;
-
-			// Create the entry
-			$entry = new Entry();
-			$entry->sectionId = $section->id;
-			$entry->typeId = $entryType->id;
-			$entry->title = $fullName ?: 'Contact Submission'; // title fallback
-			$entry->slug = ElementHelper::generateSlug($entry->title);
-			$entry->enabled = true;
-
-			// Map to your field handles (replace if any handle differs)
-			$entry->setFieldValues([
-				'formSubmissionName' => $fullName,
-				'formSubmissionCompany' => $company,
-				'formSubmissionAddress' => $address,
-				'formSubmissionEmail' => $emailAddr,
-				'formSubmissionMessage' => $messageText,
-				'formSubmissionPhoneNumber' => $phoneFull,
-				'formSubmissionSubject' => $subjectText,
-			]);
-
-			// Save via Elements service
-			if (!Craft::$app->elements->saveElement($entry)) {
-				Craft::error('Could not save entry: ' . implode(', ', $entry->getErrorSummary(true)), __METHOD__);
-				throw new \Exception('Could not save entry.');
-			}
-
-			// Optionally set a flash or return a response here
-			Craft::$app->getSession()->setFlash('success', 'Form submitted successfully.');
-
-		} catch (\Throwable $e) {
-			Craft::error($e->getMessage(), __METHOD__);
-			throw $e;
-		}
-
 
 
 		try {
@@ -216,6 +141,154 @@ class ContactController extends Controller
 				}
 			}
 
+			// Submitting Entry Data into the Crat CMS Admin
+			try {
+				// Handles
+				$sectionHandle = 'contactSubmissions';
+				$entryTypeHandle = 'contactFormSubmissions';
+
+				// Use the Entries service in Craft 5
+				$entriesService = Craft::$app->entries;
+
+				// Get the section
+				$section = $entriesService->getSectionByHandle($sectionHandle);
+				if (!$section) {
+					throw new ElementNotFoundException("Section with handle '{$sectionHandle}' not found.");
+				}
+
+				// Get the entry type (try direct lookup, then fallback)
+				$entryType = $entriesService->getEntryTypeByHandle($entryTypeHandle);
+				if (!$entryType) {
+					foreach ($entriesService->getEntryTypesBySectionId($section->id) as $type) {
+						if ($type->handle === $entryTypeHandle) {
+							$entryType = $type;
+							break;
+						}
+					}
+				}
+
+				if (!$entryType) {
+					throw new ElementNotFoundException("Entry Type with handle '{$entryTypeHandle}' not found for section '{$sectionHandle}'.");
+				}
+
+				// Build values from request (using the variables you already extracted)
+				// Ensure these variables ($fname, $lname, $email, etc.) are already defined from $request->getBodyParam(...)
+				$fullName = trim((string) ($fname . ' ' . $lname));
+				$company = (string) $company;
+				$address = (string) $address;
+				$emailAddr = (string) $email;
+				$messageText = (string) $message;
+				$phoneFull = trim((string) ($countryCode . '-' . $phone)); // countrycode-phone
+				$subjectText = (string) $subject;
+
+				// Create the entry
+				$entry = new Entry();
+				$entry->sectionId = $section->id;
+				$entry->typeId = $entryType->id;
+				$entry->title = $fullName ?: 'Contact Submission'; // title fallback
+				$entry->slug = ElementHelper::generateSlug($entry->title);
+				$entry->enabled = true;
+
+				// Map to your field handles (replace if any handle differs)
+				$entry->setFieldValues([
+					'formSubmissionName' => $fullName,
+					'formSubmissionCompany' => $company,
+					'formSubmissionAddress' => $address,
+					'formSubmissionEmail' => $emailAddr,
+					'formSubmissionMessage' => $messageText,
+					'formSubmissionPhoneNumber' => $phoneFull,
+					'formSubmissionSubject' => $subjectText,
+				]);
+				// -----------------------------
+// Handle uploaded image/video and attach to the entry
+// -----------------------------
+				if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK && $uploadedFile->size > 0) {
+					$webroot = rtrim(Craft::getAlias('@webroot'), DIRECTORY_SEPARATOR);
+					$relativeFolder = 'assets/images/form-submission-images';
+					$targetFolder = $webroot . DIRECTORY_SEPARATOR . $relativeFolder;
+
+					if (!is_dir($targetFolder) && !mkdir($targetFolder, 0755, true) && !is_dir($targetFolder)) {
+						Craft::error("Failed to create folder: {$targetFolder}", __METHOD__);
+					} else {
+						// make a safe unique filename
+						$base = pathinfo($uploadedFile->name, PATHINFO_FILENAME);
+						$ext = pathinfo($uploadedFile->name, PATHINFO_EXTENSION);
+						$safe = preg_replace('/[^A-Za-z0-9_\-]/', '_', $base);
+						$uniq = $safe . '_' . time() . '_' . bin2hex(random_bytes(4));
+						$filename = $uniq . ($ext ? '.' . $ext : '');
+						$targetFile = $targetFolder . DIRECTORY_SEPARATOR . $filename;
+
+						// Save stable copy into web/assets/... (do not rely on PHP temp)
+						if ($uploadedFile->saveAs($targetFile, true)) {
+							@chmod($targetFile, 0644);
+
+							// find a suitable volume (prefer 'assets' or 'uploads', fallback to first)
+							$volumes = Craft::$app->volumes->getAllVolumes();
+							if (!empty($volumes)) {
+								$targetVolume = null;
+								foreach ($volumes as $v) {
+									$h = strtolower((string) $v->handle);
+									if ($h === 'assets' || $h === 'uploads') {
+										$targetVolume = $v;
+										break;
+									}
+								}
+								$targetVolume = $targetVolume ?? $volumes[0];
+
+								// ensure the folder record exists in that volume
+								$assetsService = Craft::$app->assets;
+								$folderModel = null;
+								try {
+									$folderModel = $assetsService->ensureFolderByFullPathAndVolume('images/form-submission-images', $targetVolume, false);
+								} catch (\Throwable $e1) {
+									try {
+										$folderModel = $assetsService->ensureFolderByFullPathAndVolume('assets/images/form-submission-images', $targetVolume, false);
+									} catch (\Throwable $e2) {
+										Craft::warning('Could not ensure folder: ' . $e2->getMessage(), __METHOD__);
+									}
+								}
+
+								$folderId = $folderModel ? $folderModel->id : ($assetsService->getRootFolderByVolumeId($targetVolume->id)->id ?? null);
+
+								if ($folderId) {
+									$asset = new Asset();
+									$asset->tempFilePath = $targetFile; // stable path
+									$asset->filename = $filename;
+									$asset->newFolderId = $folderId;
+									$asset->title = pathinfo($filename, PATHINFO_FILENAME);
+
+									if (Craft::$app->elements->saveElement($asset)) {
+										// attach asset id to your entry field (single or multi asset field)
+										$entry->setFieldValue('formSubmissionAttachment', [$asset->id]);
+									} else {
+										Craft::error('Failed to save asset: ' . json_encode($asset->getErrors()), __METHOD__);
+									}
+								} else {
+									Craft::error('No folder ID available for asset import', __METHOD__);
+								}
+							} else {
+								Craft::error('No asset volumes available.', __METHOD__);
+							}
+						} else {
+							Craft::error("Failed to save uploaded file to {$targetFile}", __METHOD__);
+						}
+					}
+				}
+
+				// Save via Elements service
+				if (!Craft::$app->elements->saveElement($entry)) {
+					Craft::error('Could not save entry: ' . implode(', ', $entry->getErrorSummary(true)), __METHOD__);
+					throw new \Exception('Could not save entry.');
+				}
+
+				// Optionally set a flash or return a response here
+				Craft::$app->getSession()->setFlash('success', 'Form submitted successfully.');
+
+			} catch (\Throwable $e) {
+				Craft::error($e->getMessage(), __METHOD__);
+				throw $e;
+			}
+
 			// Send an email
 			$toAddress = Craft::$app->projectConfig->get('email.fromEmail') ?: 'you@example.com';
 			$subjectLine = $subject !== '' ? $subject : 'New Contact Form Message';
@@ -227,12 +300,12 @@ class ContactController extends Controller
 				->setSubject($subjectLine)
 				->setTextBody($textBody);
 
-			if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
-				$messageModel->attach($uploadedFile->tempName, [
-					'fileName' => $uploadedFile->name,
-					'contentType' => $uploadedFile->type ?: null,
-				]);
-			}
+			// if ($uploadedFile && $uploadedFile->error === UPLOAD_ERR_OK) {
+			// 	$messageModel->attach($uploadedFile->tempName, [
+			// 		'fileName' => $uploadedFile->name,
+			// 		'contentType' => $uploadedFile->type ?: null,
+			// 	]);
+			// }
 
 			$sent = $messageModel->send();
 

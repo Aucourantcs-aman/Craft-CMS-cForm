@@ -39,7 +39,16 @@ fieldLayouts:
             width: 100
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 9e221336-7530-459a-887c-0ea233a64d74
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: f1524e95-e660-4e03-83fb-abf5c4536469 # Form Submission Subject
             handle: null
@@ -62,7 +71,16 @@ fieldLayouts:
             userCondition: null
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 23751d7c-84d3-4dbb-95a0-57a27f8d524e
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: 2420296a-8e3b-46e0-b5ba-3462fb952c62 # Form Submission Name
             handle: null
@@ -79,7 +97,16 @@ fieldLayouts:
             width: 100
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 4feaaab9-8670-4b5d-91c4-715efd98452d
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: f604cf1b-c9d3-4bc8-80cc-80eb4d168447 # Form Submission Email
             handle: null
@@ -96,7 +123,16 @@ fieldLayouts:
             width: 100
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 58f24352-64ee-47e8-9463-ff271472dbc4
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: 5c23f035-00ee-4547-aa6c-d38e12c6c8d5 # Form Submission Phone Number
             handle: null
@@ -113,7 +149,16 @@ fieldLayouts:
             width: 100
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 6b6c2c54-75cf-44e5-8c9d-e46d101b1391
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: aca52138-195b-468e-ac85-9b899885c044 # Form Submission Company
             handle: null
@@ -136,7 +181,16 @@ fieldLayouts:
             userCondition: null
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 49ff747a-4e78-4fab-97f5-b3c25ab4220d
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: b9b5f679-787a-4752-86d2-de1cb9a57b01 # Form Submission Message
             handle: null
@@ -153,7 +207,16 @@ fieldLayouts:
             width: 100
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 8aaf6560-70e6-4630-b4c2-b53fa9bd6243
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: 6bc1aeb3-570a-464e-b587-5e9dd59e4172 # Form Submission Address
             handle: null
@@ -170,7 +233,16 @@ fieldLayouts:
             width: 100
           -
             dateAdded: '2025-10-02T06:05:29+00:00'
-            editCondition: null
+            editCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\FirstNameConditionRule
+                  operator: '='
+                  uid: 5494640e-aa2d-4967-9888-cea49f4955b2
+                  value: ";Iy`ny4-%`'8"
+              elementType: craft\elements\User
+              fieldContext: global
             elementCondition: null
             fieldUid: accd22f8-dc2c-47a6-b969-280c4db15fc3 # Form Submission Attachment
             handle: null
