@@ -1,0 +1,89 @@
+==========================
+Custom Form Module (Craft CMS 5)
+==========================
+
+This is a **Custom Form module** for Craft CMS 5 with SMTP email sending,
+AJAX submission, and Google reCAPTCHA v3 integration.
+
+It provides a flexible contact form that you can embed in your template
+and handle via a controller inside the `modules/contact` namespace.
+
+------------------------------------------------
+1. Composer Dependencies
+------------------------------------------------
+
+The module depends on the following packages:
+
+- craftcms/cms ^5.0.0 (Craft CMS core)
+- vlucas/phpdotenv ^5.4.0 (Environment variable management)
+
+Dev dependencies (useful for development):
+- craftcms/generator ^2.0.0
+- yiisoft/yii2-shell ^2.0.3
+
+Make sure your `composer.json` contains these entries.
+
+------------------------------------------------
+2. Module Structure
+------------------------------------------------
+
+Place the `modules` folder in the root of your Craft CMS project.
+
+modules/
+└── contact/
+    ├── ContactModule.php        # Registers the module
+    └── controllers/
+        └── ContactController.php # Main controller for form handling
+
+- **ContactController.php** handles form submission, SMTP email sending, validation, and response.
+- **ContactModule.php** is used to bootstrap and register the module within Craft.
+
+------------------------------------------------
+3. Features Currently Supported
+------------------------------------------------
+
+✔ Contact form with first/last name, email, phone, company, subject, and message fields  
+✔ File upload support (JPEG, JPG, PNG, WEBP, MP4)  
+✔ Country code dropdown with common country codes  
+✔ Honeypot field for spam protection  
+✔ Google reCAPTCHA v3 integration  
+✔ Privacy Policy and Terms & Conditions checkbox enforcement  
+✔ AJAX-based form submission with dynamic flash message display  
+✔ SMTP-ready (form submission handled by controller to send email via Craft’s mailer)  
+
+------------------------------------------------
+4. Setup Notes
+------------------------------------------------
+
+1. Ensure SMTP settings are configured in `.env` for Craft CMS.  
+2. Add your Google reCAPTCHA v3 site key and secret to `.env`.  
+   Example:
+   RECAPTCHA_SITE_KEY=your-site-key
+   RECAPTCHA_SECRET_KEY=your-secret-key
+
+3. Register the module in your `config/app.php`
+
+------------------------------------------------
+4. Next Steps
+------------------------------------------------
+
+- Extend `ContactController.php` for custom admin settings and logging.  
+- Add backend configuration UI (to be covered later).  
+- Expand validation and error handling for more robust input control.  
+
+
+# Craft CMS Admin Docs Section Setup
+
+## 1. Create the Section (Channel)
+Inside **Craft CMS Admin → Settings → Sections → New Section**:
+---
+
+## 2. Add Fields
+Go to **Settings → Fields → New Field Group** and add fields as per your requirments:
+---
+
+## 3. Create Entry Type
+In the **Docs Section → Entry Types**:   
+---
+
+## 4. Controller Update (`modules/contact/controllers/Controllers.php`)
